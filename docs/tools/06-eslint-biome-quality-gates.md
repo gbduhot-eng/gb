@@ -863,3 +863,7 @@ trabalho, nessa ordem:
 
 O primeiro instala a régua e mede; o segundo é o trabalho que a medição
 revelou.
+
+App Swift, sem `package.json`? O trilho irmão está em
+[`15-swiftlint-quality-gates.md`](15-swiftlint-quality-gates.md) — prompts
+10 → 11 → 12, template em [`templates/swiftlint/`](../../templates/swiftlint/).

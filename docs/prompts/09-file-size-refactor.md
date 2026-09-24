@@ -23,6 +23,10 @@ Ele é o segundo tempo: o 08 instala a régua e mede; este aqui manda o
 agente pegar os arquivos que não couberam e transformá-los em módulos
 menores e isolados.
 
+Projeto Swift? Use o
+[`11-swift-file-size-refactor.md`](11-swift-file-size-refactor.md) com
+`RULE_ID=file_length`. Este 09 lê `package.json`.
+
 Não use pra zerar avisos de lint em geral — isso é o
 [`02-eslint-warning-burndown.md`](02-eslint-warning-burndown.md), que é
 mais amplo e trata regra por regra. Este prompt é só sobre tamanho de

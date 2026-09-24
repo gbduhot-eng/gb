@@ -36,6 +36,9 @@ Depois de instalar, o passo natural é
 [`09-file-size-refactor.md`](09-file-size-refactor.md) — é ele que manda o
 agente quebrar os arquivos que estouraram o teto.
 
+Projeto Swift, sem `package.json`? Este prompt não serve — o irmão é o
+[`10-swiftlint-quality-gates-install.md`](10-swiftlint-quality-gates-install.md).
+
 ## Por que funciona
 
 A parte difícil de uma regra de lint caseira não é a ideia, é o código.

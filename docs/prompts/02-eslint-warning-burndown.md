@@ -44,6 +44,9 @@ arquivos que não foram escritos pensando nela) precisava de uma resposta
 humana explícita antes de qualquer código mudar — não de uma suposição
 enterrada no meio de um plano de implementação.
 
+Projeto Swift? O irmão é o
+[`12-swiftlint-warning-burndown.md`](12-swiftlint-warning-burndown.md).
+
 ## Por que funciona
 
 A lógica é transformar decisão implícita em decisão explícita, e alegação

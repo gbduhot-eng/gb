@@ -78,6 +78,35 @@ Os dois documentos por extenso:
 [08 — instalar e medir](docs/prompts/08-eslint-quality-gates-install.md) e
 [09 — quebrar os arquivos grandes](docs/prompts/09-file-size-refactor.md).
 
+### Ou: a mesma sequência, em Swift
+
+App iOS/macOS, Xcode, sem `package.json` — o 08 para. O irmão é o
+SwiftLint, mesmas três falas:
+
+```
+Leia https://raw.githubusercontent.com/soumatheusgomes/vibe-coding-toolkit/main/docs/prompts/10-swiftlint-quality-gates-install.md
+e execute o prompt que está nesse arquivo neste projeto. Use MAX_LINES=350.
+```
+
+```
+Leia https://raw.githubusercontent.com/soumatheusgomes/vibe-coding-toolkit/main/docs/prompts/11-swift-file-size-refactor.md
+e execute o prompt que está nesse arquivo neste projeto. Use MAX_LINES=350,
+BATCH_SIZE=3 e RULE_ID=file_length. Descubra sozinho os comandos de lint,
+teste e typecheck lendo o xcodeproj, o Package.swift e scripts/lint.sh.
+```
+
+```
+Leia https://raw.githubusercontent.com/soumatheusgomes/vibe-coding-toolkit/main/docs/prompts/12-swiftlint-warning-burndown.md
+e execute o prompt que está nesse arquivo neste projeto, para o conjunto
+inteiro de avisos restantes. Descubra sozinho os comandos de lint, teste,
+typecheck e build lendo o xcodeproj, o Package.swift e scripts/lint.sh.
+```
+
+O 10 copia [`templates/swiftlint/`](templates/swiftlint/), mede e não
+conserta. Se nenhum arquivo passou de 350 linhas, o 11 para vazio — isso
+é sucesso, não falha. Trilho completo:
+[15 — SwiftLint](docs/tools/15-swiftlint-quality-gates.md).
+
 ## 🧭 Índice
 
 - [💡 Sobre o projeto](#sobre-o-projeto)
@@ -146,6 +175,12 @@ Não existe um único jeito "certo" de percorrer este repositório — depende d
 
   Ele baixa as regras prontas de [`templates/eslint/`](templates/eslint/), adapta pro seu projeto e reporta quantos arquivos passaram do teto — sem consertar nada. Depois, a mesma linha trocando `08-` por [`09-file-size-refactor.md`](docs/prompts/09-file-size-refactor.md) faz ele quebrar esses arquivos em módulos menores, um por vez, com teste rodando entre cada um.
 
+- **Quer o mesmo teto de 350 linhas, mas o projeto é Swift?** Cole o
+  [`10`](docs/prompts/10-swiftlint-quality-gates-install.md) no lugar do
+  08. Depois o [`11`](docs/prompts/11-swift-file-size-refactor.md) e o
+  [`12`](docs/prompts/12-swiftlint-warning-burndown.md). Template em
+  [`templates/swiftlint/`](templates/swiftlint/).
+
 Um detalhe de idioma, pra não confundir: este README e toda a explicação dentro de `docs/` (o "como", o "por quê", os tutoriais) estão em português — pra você, que me acompanha por aqui, entender tudo sem esforço. A única parte que fica em inglês de propósito são os blocos de prompt prontos pra colar em `docs/prompts/` (o texto que você copia e cola direto num agente de IA) — isso funciona melhor em inglês, universalmente, independente do idioma de quem está lendo a explicação ao redor. Onde um conceito é específico do Claude Code (plugins, hooks, skills), o doc deixa isso explícito — boa parte do resto funciona igual no Codex ou em qualquer outro agente que leia um arquivo de instruções e execute comandos.
 
 ---
@@ -170,6 +205,7 @@ Um detalhe de idioma, pra não confundir: este README e toda a explicação dent
 | [Ponytail](docs/tools/04-ponytail.md) | A persona do "engenheiro sênior preguiçoso": uma escada de decisão que para na opção mais simples que resolve o problema de verdade, antes de escrever qualquer código. Preguiça aqui é sinônimo de eficiência — nunca de descuido com segurança ou validação. |
 | [Caveman](docs/tools/05-caveman.md) | A camada de comunicação: corta enrolação, gentileza forçada e hedging das respostas do agente, sem perder nenhuma informação real. Independente do Ponytail — um governa o que é construído, o outro como o agente fala sobre isso. |
 | [Quality gates ESLint/Biome](docs/tools/06-eslint-biome-quality-gates.md) | A documentação mais rica do toolkit: como dividir o trabalho entre dois linters sem sobreposição de regras, e subir um aviso pra erro como migração rastreada em vez de travar o time do dia pro outro. Cobre até os limites de arquitetura entre camadas do código. |
+| [Quality gates SwiftLint](docs/tools/15-swiftlint-quality-gates.md) | O mesmo raciocínio do 06, no trilho Swift: `file_length` + `no_direct_print`, `only_rules`, copiar o YAML em vez de escrever. Sequência 10 → 11 → 12. |
 | [Graphify](docs/tools/07-graphify.md) | Transforma uma pasta de código, docs, papers ou imagens num grafo de conhecimento persistente — nós centrais, comunidades, relações entre arquivos. Responde "o que quebra se eu mudar isso" numa consulta só, em vez de dezenas de greps exploratórios. |
 | [Obsidian como memória](docs/tools/08-obsidian-memory.md) | Um vault (repositório de notas) do Obsidian como memória de longo prazo do projeto, acessado só via MCP (um protocolo que conecta o agente a ferramentas externas) — nunca por escrita direta em arquivo. É pra onde migra tudo que o índice rápido de memória não tem espaço pra guardar. |
 | [Sistema de memória do Claude](docs/tools/09-claude-memory-system.md) | Um índice sempre carregado (`MEMORY.md`) para as lições caras de aprender de novo — um erro corrigido, uma regra de negócio que o código não deixa óbvia. Vem com política de crescimento clara pra ele nunca inchar até virar ruído que ninguém lê. |
@@ -192,6 +228,9 @@ Um detalhe de idioma, pra não confundir: este README e toda a explicação dent
 | [Setup completo de ESLint](docs/prompts/07-eslint-complete-setup.md) | Prompt extenso e opinativo pra montar um `eslint.config.mjs` (ESLint 9, flat config) do zero: erro só pro que é sempre bug, aviso pro que é pressão de refatoração, regras caseiras pra invariante de domínio, lint consciente de tipo isolado num tier separado não-bloqueante. Complementa o burndown acima — use este primeiro pra ter uma config boa, aquele depois pra zerar avisos acumulados. |
 | [Instalar os quality gates (teto de 350 linhas)](docs/prompts/08-eslint-quality-gates-install.md) | **(o atalho)** Prompt que aponta o agente pras três regras já escritas e testadas em `templates/eslint/` — ele copia em vez de escrever, então o resultado é sempre o mesmo código. Instala, adapta pros caminhos reais do seu projeto e mede quantas violações existem por regra; deliberadamente não conserta nenhuma. |
 | [Quebrar os arquivos gigantes](docs/prompts/09-file-size-refactor.md) | O segundo tempo do 08: pega os arquivos que estouraram o teto e os divide em módulos menores. O que faz funcionar é cortar por responsabilidade e não por contagem de linha — e mandar o agente dizer "sem costura natural" e parar, em vez de inventar abstração só pra satisfazer o linter. |
+| [Instalar os quality gates (Swift)](docs/prompts/10-swiftlint-quality-gates-install.md) | Irmão do 08 pra app Swift: copia `templates/swiftlint/`, liga `file_length` + `no_direct_print`, mede, não conserta. Se o projeto é JS/TS, o próprio prompt manda voltar pro 08. |
+| [Quebrar os arquivos gigantes (Swift)](docs/prompts/11-swift-file-size-refactor.md) | Irmão do 09: `RULE_ID=file_length`, typecheck é o `xcodebuild`. Lista vazia depois do 10 → para no passo 0. |
+| [SwiftLint warning burndown](docs/prompts/12-swiftlint-warning-burndown.md) | Irmão do 02 pra avisos que sobraram no SwiftLint. Tamanho de arquivo continua no 11. |
 
 <div align="right"><a href="#topo">▲ voltar ao topo</a></div>
 

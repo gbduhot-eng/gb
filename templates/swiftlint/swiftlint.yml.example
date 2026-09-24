@@ -1,0 +1,38 @@
+# Quality gates (toolkit 10). Copy to .swiftlint.yml, then adapt.
+# Not a style guide — only_rules turns the rest of SwiftLint off.
+#
+# Skip no_direct_data_access when this project has no ORM/database client.
+# When a log adapter exists, list it under custom_rules.no_direct_print.excluded.
+
+only_rules:
+  - file_length
+  - no_direct_print
+
+included:
+  - Sources
+
+excluded:
+  - DerivedData
+  - .build
+  - Pods
+  - .swiftpm
+  - "*.xcodeproj"
+  - "*.xcworkspace"
+
+# Set both to [MAX_LINES] when the install measured zero offenders.
+# When offenders exist: keep warning at [MAX_LINES], drop `error`, and
+# write the count in a comment. That count is the baseline.
+file_length:
+  warning: 350
+  error: 350
+
+custom_rules:
+  no_direct_print:
+    name: "no_direct_print"
+    regex: '\b(?:print|debugPrint|dump|NSLog)\s*\('
+    match_kinds:
+      - identifier
+    message: "Use the project logging helper instead of print/debugPrint/dump/NSLog."
+    severity: error
+    # excluded:
+    #   - Path/To/LogAdapter.swift
