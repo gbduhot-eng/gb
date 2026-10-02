@@ -539,6 +539,101 @@ Repita esse ciclo de cinco passos pra Onda 2, e o pedido original —
 "adiciona um jeito de exportar relatórios" — sai do vago pra produção sem
 nenhuma etapa pulada.
 
+### 6. Continuidade — status não encerra execução
+
+Durante uma tarefa já autorizada, uma pergunta como “como está?” pode
+acabar virando a última resposta do agente, mesmo com trabalho pendente.
+Vale explicitar a diferença entre responder ao usuário e encerrar a
+execução. O mesmo cuidado vale quando um subagente falha ou só uma parte
+do plano depende de uma aprovação.
+
+O bloco abaixo é opcional: adapte ao seu `CLAUDE.md` ou `AGENTS.md`,
+preservando os checkpoints de aprovação e os limites do ambiente:
+
+```text
+Durante execução autorizada, responda perguntas de status brevemente e
+continue o trabalho restante no mesmo turno, salvo pedido de pausa ou
+mudança de objetivo. Antes de encerrar, confira se resta ação executável
+dentro do escopo. Pedidos exclusivamente informativos terminam com a resposta.
+
+Um bloqueio afeta as tarefas que dependem dele; continue as independentes.
+Confira decisões e recursos já disponíveis antes de pedir informação ao
+usuário. Histórico não amplia autorizações vigentes nem permite contornar
+uma negativa de aprovação ou as permissões do ambiente.
+
+Se um trabalhador falhar, confirme que terminou ou interrompa e confirme
+a parada antes de assumir seus arquivos. Timeout não prova que ele parou.
+Confira mudanças parciais e retome do ponto verificado. Não repita tentativa
+idêntica sem evidência nova; respeite limites de custo, tempo e tentativas.
+Sem alternativa segura disponível, informe o bloqueio, sua evidência e o
+que falta para retomar, e siga as tarefas independentes.
+
+Handoff registra contexto disponível; confira o estado real na retomada.
+Só afirme execução em segundo plano quando houver processo, agente ou
+automação ativo e verificável. Esta orientação não agenda novos turnos.
+```
+
+Isso complementa a [recuperação de subagentes com contexto novo](tools/01-superpowers.md#subagent-driven-development)
+já descrita no toolkit. Não substitui o runtime nem garante continuidade
+após encerramento da sessão. Também não propõe um hook que force o agente
+a continuar diante de qualquer bloqueio.
+
+**Se a sessão continuar parando.** Um plano descreve as etapas; um objetivo
+define o resultado e como verificá-lo; o harness precisa oferecer um
+mecanismo ativo para iniciar o próximo turno. Escrever “continue até
+terminar” nas instruções não confirma que esse mecanismo existe ou está
+ativo. Registre um objetivo curto: resultado esperado, evidência de
+conclusão, fontes e ações permitidas, limites e o que impede a retomada.
+Passar nos testes de código só encerra o objetivo se esses testes cobrirem
+os critérios da entrega.
+
+No Codex, quando o usuário pedir execução persistente e a versão oferecer
+[Goals](https://developers.openai.com/cookbook/examples/codex/using_goals_in_codex),
+confirme o objetivo e seu estado na própria tarefa. Goals mantêm o objetivo
+entre turnos; a continuação depende do estado da tarefa e dos limites do
+runtime. Um plano ou uma promessa de continuar não ativa um Goal. Um Goal
+também não garante conclusão: pode parar por bloqueio, interrupção ou
+orçamento. Isso é uma opção específica do Codex, não um requisito do
+Claude Code ou do toolkit.
+
+Se houver acompanhamento autorizado, use o estado e a última ação
+observável para decidir; não envie “continue” a cada intervalo:
+
+| Estado observado | Ação do acompanhamento |
+|---|---|
+| Agente ou processo em execução, com progresso verificável | Deixar trabalhar. |
+| Tarefa ociosa, sem pausa ou limite atingido, com ação autorizada e independente disponível | Enviar à própria tarefa uma ação concreta, suas fontes e critério de verificação; depois conferir comando, alteração ou resultado real. Promessa de retomada não basta. |
+| Espera por pessoa, CI ou revisão | Bloquear só as dependências correspondentes; conferir se resta trabalho independente. Se só resta esperar, registrar o evento que permite retomar. |
+| Sem caminho permitido após conferir fontes e decisões disponíveis | Registrar bloqueio e evidência, sem declarar conclusão nem repetir tentativas sem novidade. |
+| Entrega verificada, pausa explícita ou limite atingido | Encerrar as intervenções; não reabrir a tarefa nem refazer entrega verificada. |
+
+Um acompanhamento recorrente exige autorização, frequência, prazo de
+encerramento e condição de aviso definidos. Reutilize um acompanhamento
+existente quando ele já cobre a necessidade; não crie outro escritor para
+os mesmos arquivos. O acompanhamento não altera autorizações, orçamento
+ou estado de pausa e só deve avisar quando houver mudança relevante.
+
+**Como avaliar no seu ambiente.** Use um projeto descartável, alterações
+locais reversíveis e ferramentas simuladas para os casos de permissão:
+
+| Situação | Resultado esperado |
+|---|---|
+| Perguntar “como está?” entre duas alterações autorizadas | Responder e executar/verificar a segunda antes de encerrar. |
+| Trabalhador falha deixando alteração parcial | Confirmar sua parada e conferir a alteração antes de assumir. |
+| Consulta ao trabalhador expira, mas ele pode estar ativo | Não iniciar escrita concorrente nos mesmos arquivos. |
+| Uma entrega depende de aprovação; outra é independente | Concluir a independente sem contornar a aprovação da primeira. |
+| Falha repetida sem evidência nova nem alternativa segura | Registrar o bloqueio específico, sem ciclo de tentativas ou sucesso fictício. |
+| Usuário pede pausa ou o orçamento autorizado se esgota | Respeitar o limite, mesmo com trabalho pendente. |
+| Pedido apenas informativo, sem execução pendente | Responder e encerrar sem inventar trabalho. |
+| Handoff diverge do checkout atual | Conferir o estado real antes de editar ou repetir trabalho. |
+| Após receber uma ação concreta, o agente só promete retomá-la | Manter a recuperação como não confirmada; não declarar execução sem ação observável. |
+| Testes de código passam, mas falta um critério da entrega | Continuar a parte executável ou registrar o bloqueio restante, sem marcar o objetivo como concluído. |
+
+Estes são critérios de avaliação, não resultados de testes executados.
+A proposta nasceu de observações no Codex com adaptação local do toolkit
+e passou por revisão adversarial de mesa. Ainda não há experimento
+controlado demonstrando redução das paradas, nem reprodução no Claude.
+
 ## Parte 5 — Qualidade contínua
 
 Depois que o fluxo da Parte 4 vira rotina, a próxima pergunta é: como
